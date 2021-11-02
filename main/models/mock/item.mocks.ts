@@ -1,6 +1,8 @@
 import { Item } from '../item';
-export const MockItem1: Item = new Item('Scut', 'ArmorItemType');
+import { WeaponItem } from '../weapon-item';
+import { ArmorItem } from '../armor-item';
+export const MockItem1: Item = new ArmorItem('Scut');
 
-export const MockItem2: Item = new Item('Ax', 'WeaponItemType');
+export const MockItem2: Item = new WeaponItem('Ax');
 
-export const MockItem3: Item = new Item('Arrow', 'WeaponItemType');
+export const MockItem3: Item = new WeaponItem('Arrow');

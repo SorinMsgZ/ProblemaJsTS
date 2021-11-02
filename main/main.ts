@@ -32,12 +32,13 @@ console.log(MockCharacterSheet2);
 
 if (MockCharacterSheet2.inventory[0].type === WeaponItem.TYPE_SELECTOR) {
   const itemType = MockCharacterSheet2.inventory[0] as WeaponItem;
-  //console.log(itemType.rollAttack(MockCharacterSheet2));
-  itemType.rollAttack(MockCharacterSheet2);
+  console.log(itemType.rollAttack(MockCharacterSheet2));
+  console.log(itemType.rollDamage(MockStats1));
+  //itemType.rollAttack(MockCharacterSheet2);
   //itemType.rollDamage(MockStats1);
 } else {
-  const itemType = MockCharacterSheet2.inventory[0] as ArmorItem;
-  //itemType.calcFormulaAC(MockStats1);
+  const itemType = MockCharacterSheet1.inventory[0] as ArmorItem;
+  console.log(itemType.calcFormulaAC(MockStats1));
 }
 
 //console.log((MockCharacterSheet2.inventory.itemType.calcFormulaAtack(MockCharacterSheet2));
