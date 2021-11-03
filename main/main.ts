@@ -22,7 +22,9 @@ import {
 import { MockItem1, MockItem2, MockItem3, MockItemCombat1, MockItemCombat2 } from './models/mock/item.mocks';
 import { WeaponItem } from './models/Step1/weapon-item';
 import { ArmorItem } from './models/Step1/armor-item';
-import { combatCharacters, orderByCharInitiative } from './models/Step2/combat';
+import { combatCharacters, orderByCharInitiative } from './models/Step2/combatTest';
+import { CombatArena } from './models/Step2/combat-arena';
+import { ServerReferee } from './models/Step2/server-referee';
 
 //Step1
 /*
@@ -68,5 +70,10 @@ console.log(MockItemCombat2);
 console.log(MockCharacterSheetCombat1);
 console.log(MockCharacterSheetCombat2);
 */
-console.log(combatCharacters);
-console.log(orderByCharInitiative());
+/*console.log(combatCharacters);
+console.log(orderByCharInitiative());*/
+
+const qa = new ServerReferee('Ce faci');
+let x = qa.questionAnswerQA();
+
+qa.printAnswer(x);
