@@ -1,47 +1,11 @@
-import {
-  MockCharacterClass1,
-  MockCharacterClass2,
-  MockCharacterClassCombat1,
-  MockCharacterClassCombat2,
-} from './models/mock/character-class.mock';
-import {
-  MockStats1,
-  MockStats2,
-  MockStats3,
-  MockStats4,
-  MockStats5,
-  MockStatsCombat1,
-  MockStatsCombat2,
-} from './models/mock/stats.mocks';
-import {
-  MockCharacterSheet1,
-  MockCharacterSheet2,
-  MockCharacterSheetCombat1,
-  MockCharacterSheetCombat2,
-} from './models/mock/character-sheet.mocks';
-import { MockItem1, MockItem2, MockItem3, MockItemCombat1, MockItemCombat2 } from './models/mock/item.mocks';
-import { WeaponItem } from './models/Step1/weapon-item';
-import { ArmorItem } from './models/Step1/armor-item';
-import { combatCharacters, orderByCharInitiative } from './models/Step2/combatTest';
-import { CombatArena } from './models/Step2/combat-arena';
 import { ServerReferee } from './models/Step2/server-referee';
+import { D20Dice } from './models/Step1/dice-class';
+import { MockCharacterSheetCombat1, MockCharacterSheetCombat2 } from './models/mock/character-sheet.mocks';
+import { CombatArena } from './models/Step2/combat-arena';
+import { ICombatArena } from './models/Step2/combat-arena.interface';
 
 //Step1
 /*
-
-console.log(MockStats1);
-console.log(MockStats2);
-console.log(MockStats3);
-console.log(MockStats4);
-console.log(MockStats5);
-
-console.log(MockItem1);
-console.log(MockItem2);
-console.log(MockItem3);
-
-console.log(MockCharacterSheet1);
-console.log(MockCharacterSheet2);
-
 
 if (MockCharacterSheet2.inventory[0].type === WeaponItem.TYPE_SELECTOR) {
   const itemType = MockCharacterSheet2.inventory[0] as WeaponItem;
@@ -58,22 +22,21 @@ if (MockCharacterSheet2.inventory[0].type === WeaponItem.TYPE_SELECTOR) {
 
 // Step2 Combat
 
-/*console.log(MockStatsCombat1);
-console.log(MockStatsCombat2);
+let fight = new CombatArena([MockCharacterSheetCombat1, MockCharacterSheetCombat2]);
 
-console.log(MockCharacterClassCombat1);
-console.log(MockCharacterClassCombat2);
+console.log('Start combat?');
+//answer yes/no => if "yes"=>
+//set  hasStarted
+fight.hasStarted = true;
+// roll => set initiatives &
+// order by  character initiative => set sortedCharacterOrder
+//set currentInitiativePosition
+console.log('Roll initiative');
+fight.rollInitiative();
 
-console.log(MockItemCombat1);
-console.log(MockItemCombat2);
+//console.log(Array.from(fight.initiatives.entries()));
 
-console.log(MockCharacterSheetCombat1);
-console.log(MockCharacterSheetCombat2);
-*/
-/*console.log(combatCharacters);
-console.log(orderByCharInitiative());*/
-
-const qa = new ServerReferee('Ce faci');
-let x = qa.questionAnswerQA();
-
-qa.printAnswer(x);
+for (let orderedCharacters of fight.sortedCharacterOrder) {
+  console.log(orderedCharacters + ', ' + fight.initiatives.get(orderedCharacters));
+}
+//console.log(fight.sortedCharacterOrder);
