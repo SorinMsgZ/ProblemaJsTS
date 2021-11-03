@@ -10,9 +10,11 @@ import { MockItem1, MockItem2, MockItemCombat1, MockItemCombat2 } from './item.m
 
 export const MockCharacterSheet1: CharacterSheet = new CharacterSheet('Ghita', 1, MockStats1, MockCharacterClass1, [
   MockItem1,
+  MockItem2,
 ]);
 
 export const MockCharacterSheet2: CharacterSheet = new CharacterSheet('Elena', 1, MockStats2, MockCharacterClass2, [
+  MockItem1,
   MockItem2,
 ]);
 

@@ -14,9 +14,9 @@ export class DiceClass {
   }
 
   roll(): number {
-    //return (int) ((Math.random()*(max-min))+min);
     return Math.floor(Math.random() * this.type) + 1;
   }
 }
+
 export const D20Dice = new DiceClass(DiceClassType.D20);
 export const D6Dice = new DiceClass(DiceClassType.D6);

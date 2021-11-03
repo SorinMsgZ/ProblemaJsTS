@@ -8,7 +8,7 @@ export class ArmorItem extends Item {
     super(name, ArmorItem.TYPE_SELECTOR);
   }
 
-  calcFormulaAC(dexParam: StatsSheet): number {
-    return 13 + dexParam.DEX;
+  getarmorClass(dexParam: StatsSheet): number {
+    return ArmorItem.baseParam + dexParam.DEX;
   }
 }
