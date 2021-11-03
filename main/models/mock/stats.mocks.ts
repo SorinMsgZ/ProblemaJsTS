@@ -1,4 +1,4 @@
-import { StatsSheet } from '../stats-sheet';
+import { StatsSheet } from '../Step1/stats-sheet';
 
 export const MockStats1: StatsSheet = {
   STR: 1,
@@ -34,4 +34,18 @@ export const MockStats5: StatsSheet = {
   CON: 5,
   WIS: 5,
   INT: 5,
+};
+export const MockStatsCombat1: StatsSheet = {
+  STR: Math.floor(Math.random() * 5) + 1,
+  DEX: Math.floor(Math.random() * 5) + 1,
+  CON: Math.floor(Math.random() * 5) + 1,
+  WIS: Math.floor(Math.random() * 5) + 1,
+  INT: Math.floor(Math.random() * 5) + 1,
+};
+export const MockStatsCombat2: StatsSheet = {
+  STR: Math.floor(Math.random() * 5) + 1,
+  DEX: Math.floor(Math.random() * 5) + 1,
+  CON: Math.floor(Math.random() * 5) + 1,
+  WIS: Math.floor(Math.random() * 5) + 1,
+  INT: Math.floor(Math.random() * 5) + 1,
 };
