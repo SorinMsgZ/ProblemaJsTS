@@ -23,12 +23,12 @@ export const MockCharacterSheetCombat1: CharacterSheet = new CharacterSheet(
   1,
   MockStatsCombat1,
   MockCharacterClassCombat1,
-  [MockItemCombat1]
+  [MockItemCombat1, MockItemCombat2]
 );
 export const MockCharacterSheetCombat2: CharacterSheet = new CharacterSheet(
   'Constantine',
   1,
   MockStatsCombat2,
   MockCharacterClassCombat2,
-  [MockItemCombat2]
+  [MockItemCombat1, MockItemCombat2]
 );

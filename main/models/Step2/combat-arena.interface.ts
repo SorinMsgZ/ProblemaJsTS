@@ -10,19 +10,15 @@ export interface ICombatArena {
 
   rollInitiative(): void;
 
-  //ask for choosing command1/2/3
-
-  //according currentInitiativePosition & if hasStarted=true
-  //coincide cu useActionCommand??!
-  //get enemy HP =>is the enemy dead?=>set deadCharacters
   currentInitAttackRoll(targetCharacter: string): void; //numele caracterului)=> scade HP ul ..
-  useAtackItem(itemParam: string): void;
+  useAttackItem(itemParam: string): void;
 
   //Command1
   //set currentInitiativePosition
   endTurnCommand(): void;
+
   /* //Command2
-   useActionCommand(actionParam: string, opponent: string): void;
-   //Command3
-   useBonusAction(actionParam: string): void;*/
+     useActionCommand(actionParam: string, opponent: string): void;
+     //Command3
+     useBonusAction(actionParam: string): void;*/
 }
