@@ -11,6 +11,7 @@ export class CharacterSheet {
   public character: CharacterClass;
   public inventory: Item[];
   static baseParamAC = 10;
+  public hp: number;
 
   constructor(name: string, level: number, stats: StatsSheet, character: CharacterClass, inventory: Item[]) {
     this.name = name;
@@ -18,11 +19,12 @@ export class CharacterSheet {
     this._stats = stats;
     this.character = character;
     this.inventory = inventory;
+    this.hp = this.character.class_dice.roll() * this.character.class_level + this._stats.CON;
   }
 
-  get health(): number {
-    return this.character.class_dice.roll() * this.character.class_level + this._stats.CON;
-  }
+  /*setHealth(): void {
+    this.hp= this.character.class_dice.roll() * this.character.class_level + this._stats.CON;
+  }*/
 
   get armorClass(): number {
     let AC: number = 0;

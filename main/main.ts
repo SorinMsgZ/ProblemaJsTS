@@ -53,20 +53,61 @@ console.log(
   'Server:Available commands: ["End Turn", "Use Action (action_name | target_name)" ,"Use Bonus_Action" (action_name)"]'
 );
 //Client: Use Action Attack "opponent""
+console.log('Client: Use Action Attack Dekebalus');
+let answer = 'Use Action';
+switch (answer) {
+  case 'Use Bonus': {
+    break;
+  }
+  case 'Use Action': {
+    let opponentPlayer = 'Dekebalus';
+    fight.setOpponentCharacter(opponentPlayer);
+    fight.currentInitAttackRoll(opponentPlayer);
 
-let opponentPlayer = fight.sortedCharacterOrder[1];
-fight.currentInitAttackRoll(opponentPlayer);
+    console.log(
+      'Server: Select Items to Attack with. Awailable Items: [' +
+        fight.getAvailableItems(attackerPlayer).values() +
+        ']. Available' +
+        ' Commands:["Use' +
+        ' (item_name)"]'
+    );
 
+    //Client: Use "Arrow"
+    //if type of ("Arrow") =>
+    let itemType = 'Arrow';
+    console.log('Server: Using ' + itemType + '. Rolling Attack.');
+    console.log(opponentPlayer + ' Current HP= ' + fight.opponentPlayer.hp + ' .');
+    fight.useAttackItem(itemType);
+    console.log('Rolled ' + fight.weaponAttack);
+    if (fight.attackHit) {
+      console.log(
+        'Server: ' + opponentPlayer + ' AC=' + fight.opponentPlayer.armorClass + ' . Target Hit. Rolling Damage'
+      );
+      console.log('Rolled ' + fight.damage + '.');
+    } else {
+      console.log('Target missed!!!!!!');
+    }
+    console.log(opponentPlayer + ' Current HP after damage= ' + fight.opponentPlayer.hp + ' .');
+    break;
+  }
+  case 'End Turn': {
+    fight.endTurnCommand();
+    break;
+  }
+  default: {
+    break;
+  }
+}
+//loop/repeat
+
+console.log('Server: Available Character: ' + attackerPlayer.name);
 console.log(
-  'Server: Select Items to Attack with. Awailable Items: [' +
-    fight.getAvailableItems(attackerPlayer).values() +
-    ']. Available' +
-    ' Commands:["Use' +
-    ' (item_name)"]'
+  'Server:Available commands: ["End Turn", "Use Action (action_name | target_name)" ,"Use Bonus_Action" (action_name)"]'
 );
-
-//Client: Use "Arrow"
-//if type of ("Arrow") =>
-let itemType = 'Arrow';
-console.log('Server: Using Arrow. Rolling Attack.');
-fight.useAttackItem(itemType);
+//Client: End Turn
+console.log('Client: End Turn');
+fight.endTurnCommand();
+let opponentPlayer = 'Constantine';
+fight.setOpponentCharacter(opponentPlayer);
+fight.currentInitAttackRoll(opponentPlayer);
+console.log(fight.availableCharacter.name);
