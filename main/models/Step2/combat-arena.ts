@@ -15,11 +15,6 @@ export class CombatArena implements ICombatArena {
   hasStarted: boolean;
   initiatives: Map<string, number>;
   sortedCharacterOrder: string[];
-  weaponAttack: number;
-  damage: number;
-
-  opponentPlayer: CharacterSheet;
-  attackHit: boolean;
 
   constructor(characters: CharacterSheet[]) {
     this.characters = characters;
@@ -28,17 +23,11 @@ export class CombatArena implements ICombatArena {
     this.hasStarted = false;
     this.initiatives = new Map<string, number>();
     this.sortedCharacterOrder = [];
-    this.weaponAttack = 0;
-    this.damage = 0;
-
-    this.opponentPlayer = new CharacterSheet('no name', 0, MockStats1, MockCharacterClass1, [MockItem1]);
-    this.attackHit = false;
   }
 
   rollInitiative(): void {
-    let initiativesValues = [];
-
     if (this.hasStarted) {
+      const initiativesValues = [];
       for (let characterIndex = 0; characterIndex < this.characters.length; characterIndex++) {
         const characterInitiative = D20Dice.roll() + this.characters[characterIndex].stats.DEX;
         this.initiatives.set(this.characters[characterIndex].name, characterInitiative);
@@ -48,82 +37,66 @@ export class CombatArena implements ICombatArena {
       const initiativeEntries = Array.from(this.initiatives.entries());
       // sort it
       initiativeEntries.sort((a, b) => b[1] - a[1]);
+      this.sortedCharacterOrder = initiativeEntries.map((value) => value[0]);
 
-      for (let orderedVal of initiativeEntries) {
-        this.sortedCharacterOrder.push(orderedVal[0]);
-      }
+      // for (let orderedVal of initiativeEntries) {
+      //   this.sortedCharacterOrder.push(orderedVal[0]);
+      // }
+      this.currentInitiativePosition = 0;
     }
-    this.currentInitiativePosition = 0;
   }
 
-  currentInitAttackRoll(targetCharacterName: string): void {
-    let targetCharacter = this.characters.find((character) => character.name === targetCharacterName);
+  useAttackRoll(targetCharacterName: string, itemName: string): boolean {
+    const targetCharacter = this.characters.find((character) => character.name === targetCharacterName);
     if (!targetCharacter) {
-      return;
+      return false;
     }
+    this.useAttackItem(itemName, targetCharacter);
   }
 
-  useAttackItem(itemParam: string): void {
-    if (this.checkOpponentHealth()) {
-      let playerAttacker = this.availableCharacter;
+  private useAttackItem(itemName: string, targetCharacter: CharacterSheet): boolean {
+    // double check is not inside deadCharacters
+    if (targetCharacter.hp >= 0) {
+      let playerAttacker = this.currentCharacter;
       let getItem = 0;
+
+      // replace with find
       for (let item = 0; item < playerAttacker.inventory.length; item++) {
-        if (playerAttacker.inventory[item].name == itemParam) {
+        if (playerAttacker.inventory[item].name == itemName) {
           getItem = item;
           break;
         }
       }
 
+      // check if type is weapon item else return
       const itemType = playerAttacker.inventory[getItem] as WeaponItem;
-      this.weaponAttack = itemType.rollAttack(playerAttacker);
+      const weaponAttack = itemType.rollAttack(playerAttacker);
 
-      let opponentArmorClass = this.opponentPlayer.armorClass;
+      let opponentArmorClass = targetCharacter.armorClass;
 
-      if (this.weaponAttack > opponentArmorClass) {
-        this.attackHit = true;
-
-        this.damage = itemType.rollDamage();
-
-        this.opponentPlayer.hp = this.opponentPlayer.hp - this.damage;
+      if (weaponAttack > opponentArmorClass) {
+        const damage = itemType.rollDamage();
+        targetCharacter.hp = targetCharacter.hp - damage;
+        this.deadCharacters.set(this.opponentPlayer.name, true);
+        this.initiatives.delete(this.opponentPlayer.name);
       } else {
-        console.log('Weapon Attack < opponent Armor Class: ' + this.weaponAttack + ' < ' + opponentArmorClass);
+        console.log('Weapon Attack < opponent Armor Class: ' + weaponAttack + ' < ' + opponentArmorClass);
       }
-    }
-    if (!this.checkOpponentHealth()) {
-      this.deadCharacters.set(this.opponentPlayer.name, true);
-      this.initiatives.delete(this.opponentPlayer.name);
     }
   }
 
   endTurnCommand(): void {
+    // based on how many characters in combat use modulo
     this.currentInitiativePosition++;
   }
 
-  get availableCharacter(): CharacterSheet {
-    let availableCharacter = this.sortedCharacterOrder[this.currentInitiativePosition];
-    /*let targetPlayer = this.characters[this.currentInitiativePosition];
-                        for (let player of this.characters) {
-                          if (player.name === availableCharacter) {
-                            targetPlayer = player;
-                            break;
-                          }
-                        }
-                        return targetPlayer;*/
-    //sau utilizand flatMap
-    let targetCharacter = this.characters.find((character) => character.name === availableCharacter);
+  get currentCharacter(): CharacterSheet {
+    const availableCharacterName = this.sortedCharacterOrder[this.currentInitiativePosition];
+    const targetCharacter = this.characters.find((character) => character.name === availableCharacterName);
     if (!targetCharacter) {
       return new CharacterSheet('ERROR - no name', 0, MockStats1, MockCharacterClass1, [MockItem1]);
     }
     return targetCharacter;
-  }
-
-  setOpponentCharacter(nameOpponent: string): void {
-    let targetCharacter = this.characters.find((character) => character.name === nameOpponent);
-    if (!targetCharacter) {
-      this.opponentPlayer = new CharacterSheet('ERROR - no name', 0, MockStats1, MockCharacterClass1, [MockItem1]);
-    } else {
-      this.opponentPlayer = targetCharacter;
-    }
   }
 
   getAvailableItems(playerParam: CharacterSheet): Item[] {
@@ -131,12 +104,6 @@ export class CombatArena implements ICombatArena {
     for (let items of playerParam.inventory) {
       availableItem.push(items);
     }
-    return availableItem;
-  }
-
-  checkOpponentHealth(): boolean {
-    if (this.opponentPlayer.hp > 0) {
-      return true;
-    } else return false;
+    return playerParam.inventory;
   }
 }

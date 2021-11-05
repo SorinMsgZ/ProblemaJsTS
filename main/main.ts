@@ -35,10 +35,10 @@ if (startAnswer === 'Yes') {
   fight.hasStarted = true;
 }
 //console.log('Initial players on the arena: ' + Array.from(fight.characters.entries()));
-for (let players = 0; players < fight.characters.length; players++) {
+for (let player = 0; player < fight.characters.length; player++) {
   console.log('Initial players on the arena:');
-  if (fight.characters[players] instanceof CharacterSheet) {
-    console.log('Player ' + players + ' : ' + fight.characters[players].name);
+  if (fight.characters[player]) {
+    console.log('Player ' + player + ' : ' + fight.characters[player].name);
   }
 }
 console.log('Server: Roll initiative');
@@ -49,13 +49,9 @@ for (let orderedCharacters of fight.sortedCharacterOrder) {
 }
 //console.log('Ordered players by Initiatives: ' + Array.from(fight.sortedCharacterOrder.entries()));
 
-letsCombat();
+let turn = 0;
 
 function letsCombat() {
-  let turn = 0;
-  function turnF() {
-    return turn++;
-  }
   console.log('Server: Turn ' + turn);
 
   let attackerPlayer = fight.availableCharacter;
@@ -64,7 +60,6 @@ function letsCombat() {
   console.log(
     'Server:Available commands: ["End Turn", "Use Action (action_name | target_name)" ,"Use Bonus_Action" (action_name)"]'
   );
-  //Client: Use Action Attack "opponent""
   console.log('Client: Use Action Attack Dekebalus');
   let answer = 'Use Action';
   switch (answer) {
@@ -73,12 +68,16 @@ function letsCombat() {
     }
     case 'Use Action': {
       let opponentPlayer = 'Dekebalus';
-      fight.setOpponentCharacter(opponentPlayer);
-      fight.currentInitAttackRoll(opponentPlayer);
-
+      let availableItems = fight
+        .getAvailableItems(attackerPlayer)
+        .map((item) => item.name)
+        .toString();
+      // for (let itemIndex = 0; itemIndex < fight.getAvailableItems(attackerPlayer).length; itemIndex++) {
+      //   availableItems = availableItems + fight.getAvailableItems(attackerPlayer)[item].name + '; ';
+      // }
       console.log(
         'Server: Select Items to Attack with. Awailable Items: [' +
-          fight.getAvailableItems(attackerPlayer).values() +
+          availableItems +
           ']. Available' +
           ' Commands:["Use' +
           ' (item_name)"]'
@@ -89,7 +88,7 @@ function letsCombat() {
       let itemType = 'Arrow';
       console.log('Server: Using ' + itemType + '. Rolling Attack.');
       console.log(opponentPlayer + ' Current HP= ' + fight.opponentPlayer.hp + ' .');
-      fight.useAttackItem(itemType);
+      const isHit: boolean = fight.useAttackRoll(opponentPlayer, itemType);
       console.log('Rolled ' + fight.weaponAttack);
       if (fight.attackHit) {
         console.log(
@@ -101,11 +100,10 @@ function letsCombat() {
       }
       console.log(opponentPlayer + ' Current HP after damage= ' + fight.opponentPlayer.hp + ' .');
       if (!fight.checkOpponentHealth()) {
-        console.log(fight.opponentPlayer.name + ' is DEAD (has negtive HP) !!!');
+        console.log(fight.opponentPlayer.name + ' is DEAD (has HP<=0) !!!');
       }
       if (fight.initiatives.size > 1) {
-        //turn++
-        turnF();
+        turn++;
         console.log('Available players on the arena: ' + Array.from(fight.initiatives.entries()));
         letsCombat();
       } else {
@@ -116,8 +114,7 @@ function letsCombat() {
     case 'End Turn': {
       fight.endTurnCommand();
       if (fight.initiatives.size > 1) {
-        // turn++;
-        turnF();
+        turn++;
         console.log('Available players on the arena: ' + Array.from(fight.initiatives.entries()));
         letsCombat();
       } else {
@@ -130,3 +127,5 @@ function letsCombat() {
     }
   }
 }
+
+letsCombat();

@@ -11,21 +11,21 @@ export interface ICombatArena {
 
   rollInitiative(): void;
 
-  currentInitAttackRoll(targetCharacter: string): void;
+  useAttackRoll(targetCharacterName: string, itemName: string): void;
 
-  useAttackItem(itemParam: string): void;
+  // useAttackItem(itemParam: string): void;
 
   endTurnCommand(): void;
 
   get availableCharacter(): CharacterSheet;
 
-  setOpponentCharacter(nameOpponent: string): void;
+  // setOpponentCharacter(nameOpponent: string): void;
 
   /* //Command2
          useActionCommand(actionParam: string, opponent: string): void;
          //Command3
          useBonusAction(actionParam: string): void;*/
   getAvailableItems(playerParam: CharacterSheet): Item[];
-
-  checkOpponentHealth(): boolean;
+  //
+  // checkOpponentHealth(): boolean;
 }
