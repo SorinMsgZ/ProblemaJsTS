@@ -10,15 +10,10 @@ export interface ICombatArena {
   sortedCharacterOrder: string[];
 
   rollInitiative(): void;
-
   useAttackRoll(targetCharacterName: string, itemName: string): void;
-
   // useAttackItem(itemParam: string): void;
-
   endTurnCommand(): void;
-
-  get availableCharacter(): CharacterSheet;
-
+  get currentCharacter(): CharacterSheet;
   // setOpponentCharacter(nameOpponent: string): void;
 
   /* //Command2

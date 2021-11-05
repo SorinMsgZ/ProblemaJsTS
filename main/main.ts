@@ -47,14 +47,28 @@ console.log('Ordered players by Initiatives: ');
 for (let orderedCharacters of fight.sortedCharacterOrder) {
   console.log(orderedCharacters + ', ' + fight.initiatives.get(orderedCharacters));
 }
-//console.log('Ordered players by Initiatives: ' + Array.from(fight.sortedCharacterOrder.entries()));
-
 let turn = 0;
 
-function letsCombat() {
-  console.log('Server: Turn ' + turn);
+function battleToEndOfGame(): boolean {
+  if (fight.initiatives.size > 1) {
+    turn++;
+    console.log('Available players on the arena: ' + Array.from(fight.initiatives.entries()));
+    letsCombat();
+    return false;
+  } else {
+    console.log('Player left: ' + Array.from(fight.initiatives.entries()));
+    console.log('Dead players:: ' + Array.from(fight.deadCharacters.entries()));
+    console.log('One player left=> End of fight');
+    return true;
+  }
+}
 
-  let attackerPlayer = fight.availableCharacter;
+letsCombat();
+
+function letsCombat() {
+  console.log('>>>>>Server: Turn ' + turn);
+
+  let attackerPlayer = fight.currentCharacter;
 
   console.log('Server: Available Character: ' + attackerPlayer.name);
   console.log(
@@ -87,39 +101,25 @@ function letsCombat() {
       //if type of ("Arrow") =>
       let itemType = 'Arrow';
       console.log('Server: Using ' + itemType + '. Rolling Attack.');
-      console.log(opponentPlayer + ' Current HP= ' + fight.opponentPlayer.hp + ' .');
+      console.log(opponentPlayer);
       const isHit: boolean = fight.useAttackRoll(opponentPlayer, itemType);
-      console.log('Rolled ' + fight.weaponAttack);
-      if (fight.attackHit) {
-        console.log(
-          'Server: ' + opponentPlayer + ' AC=' + fight.opponentPlayer.armorClass + ' . Target Hit. Rolling Damage'
-        );
-        console.log('Rolled ' + fight.damage + '.');
+      console.log('Rolled with selected weapon');
+      if (isHit) {
+        console.log('Server: ' + opponentPlayer + '. Target Hit. Rolling Damage');
+        console.log('Rolled damage');
       } else {
         console.log('Target missed!!!!!!');
       }
-      console.log(opponentPlayer + ' Current HP after damage= ' + fight.opponentPlayer.hp + ' .');
-      if (!fight.checkOpponentHealth()) {
-        console.log(fight.opponentPlayer.name + ' is DEAD (has HP<=0) !!!');
+
+      if (fight.deadCharacters.get(opponentPlayer)) {
+        console.log(opponentPlayer + ' is DEAD (has HP<=0) !!!');
       }
-      if (fight.initiatives.size > 1) {
-        turn++;
-        console.log('Available players on the arena: ' + Array.from(fight.initiatives.entries()));
-        letsCombat();
-      } else {
-        console.log('One player left=> End of fight');
-      }
+      battleToEndOfGame();
       break;
     }
     case 'End Turn': {
       fight.endTurnCommand();
-      if (fight.initiatives.size > 1) {
-        turn++;
-        console.log('Available players on the arena: ' + Array.from(fight.initiatives.entries()));
-        letsCombat();
-      } else {
-        console.log('One player left=> End of fight');
-      }
+      battleToEndOfGame();
       break;
     }
     default: {
@@ -127,5 +127,3 @@ function letsCombat() {
     }
   }
 }
-
-letsCombat();

@@ -7,6 +7,7 @@ import { MockStats1 } from '../mock/stats.mocks';
 import { MockItem1 } from '../mock/item.mocks';
 import { MockCharacterClass1 } from '../mock/character-class.mock';
 import { WeaponItem } from '../Step1/weapon-item';
+import { ArmorItem } from '../Step1/armor-item';
 
 export class CombatArena implements ICombatArena {
   characters: CharacterSheet[];
@@ -35,13 +36,8 @@ export class CombatArena implements ICombatArena {
       }
 
       const initiativeEntries = Array.from(this.initiatives.entries());
-      // sort it
       initiativeEntries.sort((a, b) => b[1] - a[1]);
       this.sortedCharacterOrder = initiativeEntries.map((value) => value[0]);
-
-      // for (let orderedVal of initiativeEntries) {
-      //   this.sortedCharacterOrder.push(orderedVal[0]);
-      // }
       this.currentInitiativePosition = 0;
     }
   }
@@ -51,43 +47,59 @@ export class CombatArena implements ICombatArena {
     if (!targetCharacter) {
       return false;
     }
-    this.useAttackItem(itemName, targetCharacter);
+    return this.useAttackItem(itemName, targetCharacter);
   }
 
   private useAttackItem(itemName: string, targetCharacter: CharacterSheet): boolean {
-    // double check is not inside deadCharacters
-    if (targetCharacter.hp >= 0) {
+    let isHitted: boolean = false;
+    // double check is not inside deadCharacters-DONE
+    if (targetCharacter.hp > 0 && !this.deadCharacters.get(targetCharacter.name)) {
       let playerAttacker = this.currentCharacter;
-      let getItem = 0;
+      //let getItem:Item ;
 
-      // replace with find
-      for (let item = 0; item < playerAttacker.inventory.length; item++) {
-        if (playerAttacker.inventory[item].name == itemName) {
-          getItem = item;
-          break;
-        }
+      // replace with find -DONE
+      const getItem = playerAttacker.inventory.find((item) => item.name === itemName);
+      /* for (let item = 0; item < playerAttacker.inventory.length; item++) {
+               if (playerAttacker.inventory[item].name == itemName) {
+                 getItem = item;
+                 break;
+               }
+             }*/
+      if (!getItem) {
+        return false;
       }
+      // check if type is weapon item else return -DONE
+      if (getItem.type === WeaponItem.TYPE_SELECTOR) {
+        const itemType = getItem as WeaponItem;
+        const weaponAttack = itemType.rollAttack(playerAttacker);
 
-      // check if type is weapon item else return
-      const itemType = playerAttacker.inventory[getItem] as WeaponItem;
-      const weaponAttack = itemType.rollAttack(playerAttacker);
+        let opponentArmorClass = targetCharacter.armorClass;
 
-      let opponentArmorClass = targetCharacter.armorClass;
+        if (weaponAttack > opponentArmorClass) {
+          isHitted = true;
+          const damage = itemType.rollDamage();
+          targetCharacter.hp = targetCharacter.hp - damage;
 
-      if (weaponAttack > opponentArmorClass) {
-        const damage = itemType.rollDamage();
-        targetCharacter.hp = targetCharacter.hp - damage;
-        this.deadCharacters.set(this.opponentPlayer.name, true);
-        this.initiatives.delete(this.opponentPlayer.name);
+          if (targetCharacter.hp <= 0) {
+            this.deadCharacters.set(targetCharacter.name, true);
+            this.initiatives.delete(targetCharacter.name);
+          }
+        } else {
+          isHitted = false;
+        }
       } else {
-        console.log('Weapon Attack < opponent Armor Class: ' + weaponAttack + ' < ' + opponentArmorClass);
       }
     }
+    return isHitted;
   }
 
   endTurnCommand(): void {
-    // based on how many characters in combat use modulo
-    this.currentInitiativePosition++;
+    // based on how many characters in combat use modulo: (currentPos)%no_of_ch => merge circular - DONE
+    if (this.currentInitiativePosition % this.initiatives.size != 0) {
+      this.currentInitiativePosition++;
+    } else {
+      this.currentInitiativePosition = 0;
+    }
   }
 
   get currentCharacter(): CharacterSheet {
