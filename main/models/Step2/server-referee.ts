@@ -35,12 +35,11 @@ export class ServerReferee {
   }
 }
 
-/*
-Antonio:
-    const readline = require('readline').createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
+/*//Antonio:
+const readline = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 let question: string = 'Whatever?';
 
 function server(answer: string | null): void {
